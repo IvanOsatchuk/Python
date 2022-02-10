@@ -19,7 +19,8 @@ def theme():
    s.theme_use(theme_v)
 
 def restart():
-
+   
+   on_stop()
    for i in root.winfo_children():
          i.destroy()
    initial(root)
