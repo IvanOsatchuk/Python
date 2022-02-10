@@ -3,7 +3,7 @@
 
 from tkinter import *
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+#from ttkbootstrap.constants import *
 import time
 import sys
 import os
@@ -19,14 +19,10 @@ def theme():
    s.theme_use(theme_v)
 
 def restart():
-   if len(sys.argv) > 1:
-      sys.argv[1] = str(root.winfo_rootx())
-      sys.argv[2] = str(root.winfo_rooty())
-   else:
-      sys.argv.append(str(root.winfo_rootx()))
-      sys.argv.append(str(root.winfo_rooty()))
-   python = sys.executable
-   os.execl(python, python, * sys.argv)
+
+   for i in root.winfo_children():
+         i.destroy()
+   initial(root)
 
 def on_stop():
    global times, f_stop
@@ -44,7 +40,7 @@ def on_pause():
    aux = times
    times = -1
    flag_pause = True
-   print(times)
+   
    root.title('Timer - Pausado')
    b_pause.config(bootstyle="SECONDARY")
    b_continue.config(bootstyle="SUCCESS")
@@ -56,13 +52,13 @@ def on_continue():
    
    times = aux 
    flag_pause = False
-   print(times)
+   
    root.title('Timer')
    countdowntimer(times)
 
 
 def layout_timer_run():
-   global b_continue, b_pause, label_saida
+   global b_continue, b_pause, label_saida, frame_timer
 
    frame_timer = Frame(root)
    frame_timer.pack()
@@ -142,8 +138,53 @@ def countdowntimer(input_t=None):
             i += 1
       times -= 1
 
-   
+def initial(root):
 
+   global entry_hrs, entry_mins, entry_sec
+   
+   frame_inicio = ttk.Frame(root, bootstyle="light")
+   frame_inicio.pack(fill=BOTH)
+
+   frame_theme = ttk.Frame(root, bootstyle="default")
+   frame_theme.pack(side=BOTTOM)
+
+   # ================================== entradas =================================
+
+   label = ttk.Label(frame_inicio, text='Tempo (hh mm ss):', bootstyle="inverse-light")
+   label.pack(side=LEFT, padx=5, pady=5)
+
+   entry_hrs = ttk.Entry(frame_inicio, textvariable=hrs, width=width_entry, justify='center')
+
+   entry_hrs.pack(side=LEFT, padx=5, pady=5)
+   entry_hrs.delete(0, END)
+   entry_hrs.insert(0, "00")
+
+   entry_mins = ttk.Entry(frame_inicio, textvariable=mins, width=width_entry, justify='center')
+   entry_mins.pack(side=LEFT, padx=5, pady=5)
+   entry_mins.delete(0, END)
+   entry_mins.insert(0, "00")
+
+   entry_sec = ttk.Entry(frame_inicio, textvariable=sec, width=width_entry, justify='center')
+   entry_sec.pack(side=LEFT, padx=5, pady=5)
+   entry_sec.delete(0, END)
+   entry_sec.insert(0, "00")
+
+   b_start = ttk.Button(frame_inicio, text='Start', bootstyle="PRIMARY",  command = countdowntimer)
+   b_start.pack(padx=5, pady=5)
+
+
+   # ================================== temas =================================
+   theme_check_dark = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Dark", variable=theme_var, value='Dark', command=theme)
+   theme_check_dark.pack(side=LEFT, padx=5, pady=5)
+
+   theme_check_light = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Ligth", variable=theme_var, value='Light',command=theme)
+   theme_check_light.pack(side=LEFT, padx=5, pady=5)
+
+   theme_check_normal = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Normal", variable=theme_var, value='Normal', command=theme)
+   theme_check_normal.pack(side=LEFT, padx=5, pady=5)
+
+   
+   
 root = ttk.Window()
 
 root.title('Timer')
@@ -159,7 +200,6 @@ else:
    root.geometry('+300+300')
 
 input_var = StringVar()
-
 sec = StringVar()
 mins = StringVar()
 hrs = StringVar()
@@ -168,43 +208,6 @@ theme_var = StringVar()
 
 width_entry = 4
 
-frame_inicio = ttk.Frame(root, bootstyle="light")
-frame_inicio.pack(fill=BOTH)
-
-frame_theme = ttk.Frame(root, bootstyle="default")
-frame_theme.pack(side=BOTTOM)
-
-# ================================== entradas =================================
-
-label = ttk.Label(frame_inicio, text='Tempo (hh mm ss):', bootstyle="inverse-light")
-label.pack(side=LEFT, padx=5, pady=5)
-
-entry_hrs = ttk.Entry(frame_inicio, textvariable=hrs, width=width_entry, justify='center')
-
-entry_hrs.pack(side=LEFT, padx=5, pady=5)
-entry_hrs.insert(0, "00")
-
-entry_mins = ttk.Entry(frame_inicio, textvariable=mins, width=width_entry, justify='center')
-entry_mins.pack(side=LEFT, padx=5, pady=5)
-entry_mins.insert(0, "00")
-
-entry_sec = ttk.Entry(frame_inicio, textvariable=sec, width=width_entry, justify='center')
-entry_sec.pack(side=LEFT, padx=5, pady=5)
-entry_sec.insert(0, "00")
-
-b_start = ttk.Button(frame_inicio, text='Start', bootstyle="PRIMARY",  command = countdowntimer)
-b_start.pack(padx=5, pady=5)
-
-
-# ================================== temas =================================
-theme_check_dark = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Dark", variable=theme_var, value='Dark', command=theme)
-theme_check_dark.pack(side=LEFT, padx=5, pady=5)
-
-theme_check_light = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Ligth", variable=theme_var, value='Light',command=theme)
-theme_check_light.pack(side=LEFT, padx=5, pady=5)
-
-theme_check_normal = ttk.Radiobutton(frame_theme, bootstyle="success-round-toggle", text = "Normal", variable=theme_var, value='Normal', command=theme)
-theme_check_normal.pack(side=LEFT, padx=5, pady=5)
+initial(root)
 
 root.mainloop()
-
